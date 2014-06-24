@@ -1,0 +1,9 @@
+{
+	"name": "webvimark/module-migrations",
+	"description": "Gui migrations for yii 2 gridview",
+	"autoload": {
+		"psr-4": {
+			"webvimark\\modules\\migrations\\": ""
+		}
+	}
+}
