@@ -25,7 +25,7 @@ class MigrateController extends \yii\console\controllers\MigrateController
 	 *
 	 * @inheritdoc
 	 */
-	public function befffforeAction($action)
+	public function beforeAction($action)
 	{
 		$path = Yii::getAlias($this->migrationPath);
 		if ( !is_dir($path) )
@@ -47,12 +47,36 @@ class MigrateController extends \yii\console\controllers\MigrateController
 			}
 		}
 
-		$this->checkPathColumn();
+//		$this->checkPathColumn();
 
 		$version = Yii::getVersion();
 		echo "Yii Migration Tool (based on Yii v{$version})\n\n";
 
 		return true;
+	}
+
+	/**
+	 * Chmod added
+	 *
+	 * @inheritdoc
+	 */
+	public function actionCreate($name)
+	{
+		if (!preg_match('/^\w+$/', $name)) {
+			throw new Exception("The migration name should contain letters, digits and/or underscore characters only.");
+		}
+
+		$name = 'm' . gmdate('ymd_His') . '_' . $name;
+		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
+
+		if ($this->confirm("Create new migration '$file'?")) {
+			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $name]);
+
+			file_put_contents($file, $content);
+			chmod($file, 0766);
+
+			echo "New migration created successfully.\n";
+		}
 	}
 
 	/**
@@ -438,6 +462,6 @@ class MigrateController extends \yii\console\controllers\MigrateController
 //		$pathName = substr($pathName, 0, -strlen('migrations'));
 		$pathName = str_replace(\Yii::$app->basePath, '', $path);
 
-		return $version . " <span class='badge badge-info'>[[" . $pathName . "]]</span>" . "\n";
+		return $version . " <span class='badge alert-info'>[[" . $pathName . "]]</span>" . "\n";
 	}
 } 

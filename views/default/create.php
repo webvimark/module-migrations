@@ -8,6 +8,7 @@ use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
 ?>
+<?php $this->title = 'Create migration' ?>
 <h1>Create migration</h1>
 
 <?= $this->render('_buttons') ?>
