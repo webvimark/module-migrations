@@ -1,6 +1,6 @@
 <?php
 
-namespace app\webvimark\modules\migrations;
+namespace webvimark\modules\migrations;
 
 use yii\di\ServiceLocator;
 use yii\helpers\ArrayHelper;
@@ -17,7 +17,7 @@ class Migration extends \yii\base\Module
 	 */
 	public $migrationsFolder = 'migrations';
 
-	public $controllerNamespace = 'app\webvimark\modules\migrations\controllers';
+	public $controllerNamespace = 'webvimark\modules\migrations\controllers';
 
 	/**
 	 * Init
@@ -36,7 +36,7 @@ class Migration extends \yii\base\Module
 
 		$controllerMap = ArrayHelper::merge(\Yii::$app->controllerMap, [
 			'migrate' => [
-				'class' => 'app\webvimark\modules\migrations\components\MigrateController',
+				'class' => 'webvimark\modules\migrations\components\MigrateController',
 //				'migrationTable' => 'my_custom_migrate_table',
 			]
 		]);

@@ -6,10 +6,10 @@
  * Time: 10:54 AM
  */
 
-namespace app\webvimark\modules\migrations\components;
+namespace webvimark\modules\migrations\components;
 
 
-use app\webvimark\modules\migrations\forms\CreateForm;
+use webvimark\modules\migrations\forms\CreateForm;
 use yii\console\Exception;
 use yii\db\Connection;
 use yii\db\Query;

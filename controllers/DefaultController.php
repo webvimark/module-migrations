@@ -1,8 +1,8 @@
 <?php
 
-namespace app\webvimark\modules\migrations\controllers;
+namespace webvimark\modules\migrations\controllers;
 
-use app\webvimark\modules\migrations\forms\CreateForm;
+use webvimark\modules\migrations\forms\CreateForm;
 use yii\web\Controller;
 
 class DefaultController extends Controller

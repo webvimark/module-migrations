@@ -1,5 +1,5 @@
 <?php
-namespace app\webvimark\modules\migrations\forms;
+namespace webvimark\modules\migrations\forms;
 
 
 use yii\base\Model;

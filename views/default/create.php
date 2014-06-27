@@ -3,7 +3,7 @@
  * @var $this yii\web\View
  * @var $title string
  */
-use app\webvimark\modules\migrations\forms\CreateForm;
+use webvimark\modules\migrations\forms\CreateForm;
 use yii\bootstrap\ActiveForm;
 use yii\helpers\Html;
 
