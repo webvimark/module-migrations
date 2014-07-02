@@ -5,7 +5,7 @@ namespace webvimark\modules\migrations;
 use yii\di\ServiceLocator;
 use yii\helpers\ArrayHelper;
 
-class Migration extends \yii\base\Module
+class MigrationModule extends \yii\base\Module
 {
 	/**
 	 * @var string

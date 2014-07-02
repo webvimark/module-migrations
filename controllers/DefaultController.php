@@ -7,7 +7,7 @@ use yii\web\Controller;
 
 class DefaultController extends Controller
 {
-	public $layout = '//back';
+//	public $layout = '//back';
 	/**
 	 * @return string
 	 */
