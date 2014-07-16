@@ -19,6 +19,8 @@ use Yii;
 
 class MigrateController extends \yii\console\controllers\MigrateController
 {
+	public $templateFile = '@vendor/webvimark/module-migrations/components/migration_template.php';
+
 	/**
 	 * Adding 0766 mode to [[FileHelper::createDirectory()]]
 	 * And create "path" column in migration table if it doesn't exists
@@ -62,15 +64,51 @@ class MigrateController extends \yii\console\controllers\MigrateController
 	 */
 	public function actionCreate($name)
 	{
-		if (!preg_match('/^\w+$/', $name)) {
-			throw new Exception("The migration name should contain letters, digits and/or underscore characters only.");
+		if ( !preg_match('/^\w+$/', $name) )
+		{
+			throw new Exception( "The migration name should contain letters, digits and/or underscore characters only." );
 		}
 
 		$name = 'm' . gmdate('ymd_His') . '_' . $name;
 		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
 
-		if ($this->confirm("Create new migration '$file'?")) {
-			$content = $this->renderFile(Yii::getAlias($this->templateFile), ['className' => $name]);
+		if ( $this->confirm("Create new migration '$file'?") )
+		{
+			$content = $this->renderFile(Yii::getAlias($this->templateFile), [
+				'className' => $name,
+				'upCode'    => '',
+				'downCode'  => '',
+			]);
+
+			file_put_contents($file, $content);
+			chmod($file, 0766);
+
+			echo "New migration created successfully.\n";
+		}
+	}
+
+	/**
+	 * Chmod added
+	 *
+	 * @inheritdoc
+	 */
+	public function actionScaffold($name, $upCode, $downCode)
+	{
+		if ( !preg_match('/^\w+$/', $name) )
+		{
+			throw new Exception( "The migration name should contain letters, digits and/or underscore characters only." );
+		}
+
+		$name = 'm' . gmdate('ymd_His') . '_' . $name;
+		$file = $this->migrationPath . DIRECTORY_SEPARATOR . $name . '.php';
+
+		if ( $this->confirm("Create new migration '$file'?") )
+		{
+			$content = $this->renderFile(Yii::getAlias($this->templateFile), [
+				'className' => $name,
+				'upCode'    => $upCode,
+				'downCode'  => $downCode,
+			]);
 
 			file_put_contents($file, $content);
 			chmod($file, 0766);

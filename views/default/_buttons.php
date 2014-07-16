@@ -10,6 +10,7 @@ use yii\helpers\Html;
 		<?= Html::a('New migrations', ['index'], ['class'=>'btn btn-default']); ?>
 		<?= Html::a('Migration history', ['history'], ['class'=>'btn btn-default']) ?>
 		<?= Html::a('Create migration', ['create'], ['class'=>'btn btn-primary']) ?>
+		<?= Html::a('Scaffold', ['scaffold'], ['class'=>'btn btn-info']) ?>
 		<?= Html::a('Revert last migration', ['down'], [
 			'class'=>'btn btn-warning pull-right',
 			'data-confirm'=>'Revert last migration ?',

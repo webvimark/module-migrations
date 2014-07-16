@@ -2,12 +2,14 @@
 
 namespace webvimark\modules\migrations\controllers;
 
+use webvimark\components\BaseController;
 use webvimark\modules\migrations\forms\CreateForm;
-use yii\web\Controller;
+use webvimark\modules\migrations\forms\ScaffoldForm;
+use Yii;
 
-class DefaultController extends Controller
+class DefaultController extends BaseController
 {
-//	public $layout = '//back';
+	public $layout = '//back';
 	/**
 	 * @return string
 	 */
@@ -55,6 +57,42 @@ class DefaultController extends Controller
 	/**
 	 * @return string
 	 */
+	public function actionScaffold()
+	{
+		$model = new ScaffoldForm();
+
+		if ( $model->load(\Yii::$app->request->post()) AND $model->validate() )
+		{
+			$params['name'] = $model->name;
+
+			if ( $model->path )
+				$params['--migrationPath'] = $model->path;
+
+			$params['upCode'] = $model->getUpCode();
+			$params['downCode'] = $model->getDownCode();
+
+			$output = $this->runMigrationAction('scaffold', $params);
+
+			$output .= $this->runMigrationAction('up');
+
+			$modules = ScaffoldForm::getModulesAsArray();
+
+			$ns = str_replace('\controllers', '\models', Yii::$app->getModule($modules[$model->path])->controllerNamespace);
+
+			return $this->render('scaffoldForGii', [
+				'title'  => 'Scaffolding migration',
+				'output' => $output,
+				'tables' => $model->getTables(),
+				'ns'     => $ns,
+			]);
+		}
+
+		return $this->render('scaffold', compact('model'));
+	}
+
+	/**
+	 * @return string
+	 */
 	public function actionCreate()
 	{
 		$model = new CreateForm();
@@ -91,6 +129,13 @@ class DefaultController extends Controller
 		{
 			$command = " {$script} migrate/{$action} {$params['name']} --interactive=0";
 			unset($params['name']);
+		}
+		elseif ( $action == 'scaffold' )
+		{
+			$command = " {$script} migrate/{$action} {$params['name']} {$params['upCode']} {$params['downCode']}  --interactive=0";
+			unset($params['name']);
+			unset($params['upCode']);
+			unset($params['downCode']);
 		}
 		else
 		{
