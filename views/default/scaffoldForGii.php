@@ -31,7 +31,7 @@ use yii\helpers\Inflector;
 			<?= Html::a(
 				$table,
 				['/gii/0', 'tableName'=>$table, 'modelClass'=>Inflector::id2camel($table, '_'), 'ns'=>$ns],
-				['target'=>'blank']
+				['target'=>'_blank']
 			) ?>
 		</li>
 		<?php endforeach ?>
