@@ -120,7 +120,7 @@ class MigrateController extends \yii\console\controllers\MigrateController
 	/**
 	 * @inheritdoc
 	 */
-	public function actionNew($limit = 10)
+	public function actionNew($limit = 100)
 	{
 		if ($limit === 'all') {
 			$limit = null;
@@ -214,7 +214,7 @@ class MigrateController extends \yii\console\controllers\MigrateController
 	/**
 	 * @inheritdoc
 	 */
-	public function actionHistory($limit = 10)
+	public function actionHistory($limit = 100)
 	{
 		if ($limit === 'all') {
 			$limit = null;
