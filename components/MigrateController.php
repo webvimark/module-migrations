@@ -49,7 +49,7 @@ class MigrateController extends \yii\console\controllers\MigrateController
 			}
 		}
 
-//		$this->checkPathColumn();
+		$this->checkPathColumn();
 
 		$version = Yii::getVersion();
 		echo "Yii Migration Tool (based on Yii v{$version})\n\n";
@@ -464,25 +464,23 @@ class MigrateController extends \yii\console\controllers\MigrateController
 		if ( $this->_migrationTableExists() AND !$this->_pathColumnExists() )
 		{
 			$this->db->createCommand()->addColumn($this->migrationTable, 'path', 'string not null')->execute();
-			\Yii::$app->cache->flush();
+			Yii::$app->cache->flush();
 		}
 	}
 
 	/**
 	 * @return bool
 	 */
-	private function _pathColumnExists()
+	protected function _pathColumnExists()
 	{
-		return true;
 		return $this->db->getTableSchema($this->migrationTable)->getColumn('path') !== null;
 	}
 
 	/**
 	 * @return bool
 	 */
-	private function _migrationTableExists()
+	protected function _migrationTableExists()
 	{
-		return true;
 		return $this->db->schema->getTableSchema($this->migrationTable, true) !== null;
 	}
 
