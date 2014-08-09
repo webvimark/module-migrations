@@ -123,7 +123,7 @@ class DefaultController extends BaseController
 	 */
 	public function runMigrationAction($action = 'new', $params = [])
 	{
-		$script = \Yii::getAlias($this->module->executableYii);
+		$script = Yii::getAlias($this->module->executableYii);
 
 		if ( $action == 'create' )
 		{

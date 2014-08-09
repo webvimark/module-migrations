@@ -47,9 +47,9 @@ class MigrateController extends \yii\console\controllers\MigrateController
 			{
 				throw new Exception("The 'db' option must refer to the application component ID of a DB connection.");
 			}
-		}
 
-		$this->checkPathColumn();
+			$this->checkPathColumn();
+		}
 
 		$version = Yii::getVersion();
 		echo "Yii Migration Tool (based on Yii v{$version})\n\n";
