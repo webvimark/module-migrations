@@ -4,6 +4,7 @@ namespace webvimark\modules\migrations\forms;
 
 use yii\base\Model;
 use yii\helpers\ArrayHelper;
+use Yii;
 
 class ScaffoldForm extends Model
 {
@@ -13,20 +14,25 @@ class ScaffoldForm extends Model
 
 	protected static $_excludeSystemModules = ['gii', 'debug'];
 
+	protected $_tableFields = [];
+	protected $_tables = [];
+	protected $_fks = [];
+	protected $_pks = [];
+
 	/**
 	 * @return array
 	 */
 	public static function getModulesAsArray()
 	{
 		$result = [];
-		foreach (\Yii::$app->modules as $moduleId => $unusedStuff)
+		foreach (Yii::$app->modules as $moduleId => $unusedStuff)
 		{
 			if ( in_array($moduleId, self::$_excludeSystemModules) )
 			{
 				continue;
 			}
 
-			$module = \Yii::$app->getModule($moduleId);
+			$module = Yii::$app->getModule($moduleId);
 			$result[$module->basePath . '/migrations'] = $module->id;
 		}
 
@@ -40,26 +46,26 @@ class ScaffoldForm extends Model
 	{
 		$lines = explode("\n", $this->code);
 
-		$tables = [];
+		$this->_tables = [];
 
 		foreach ($lines as $line)
 		{
-			$tableFields = [];
+			$this->_tableFields = [];
 			$line = trim($line);
 
 			if ( $line )
 			{
 				$words = explode(' ', $line);
 
-				if ( isset( $words[0] ) )
+				if ( isset( $words[0] ) ) // $words[0] - table name
 				{
-					$fks = [];
+					$this->_fks = [];
 
-					$tableFields['id'] = 'pk';
+					$this->_tableFields['id'] = 'pk';
 
-					$line = ltrim($line, $words[0]);
+					$line = ltrim($line, $words[0]); // remove table name from line
 
-					$fields = explode('|', $line);
+					$fields = explode('|', $line); // extract statements like "sorter:int not null"
 
 					foreach ($fields as $field)
 					{
@@ -67,45 +73,35 @@ class ScaffoldForm extends Model
 
 						$fieldParts = explode(':', $field);
 
-						if ( stripos($fieldParts[1], 'fk') !== false )
+						if ( stripos($fieldParts[1], 'fk_pk') !== false )
 						{
-							$fkParts = explode(' ', $fieldParts[1]);
-							$fieldType = '';
-							$fkString = '';
-
-							foreach ($fkParts as $fkPart)
-							{
-								if ( stripos($fkPart, 'fk') !== false )
-								{
-									array_shift($fkParts);
-
-									$fkString = implode(' ', $fkParts);
-									break;
-								}
-
-								$fieldType .= $fkPart . ' ';
-								array_shift($fkParts);
-							}
-							$tableFields[trim($fieldParts[0])] = trim($fieldType);
-
-							$fks[] = 'FOREIGN KEY (' . $fieldParts[0] . ') REFERENCES ' . $fkString;
+							$this->generateFKWithPK($fieldParts);
+						}
+						elseif ( stripos($fieldParts[1], 'fk') !== false )
+						{
+							$this->generateFK($fieldParts);
 						}
 						else
 						{
-							$tableFields[trim($fieldParts[0])] = trim($fieldParts[1]);
+							$this->_tableFields[trim($fieldParts[0])] = trim($fieldParts[1]);
 						}
 
 					}
 
-					$tableFields['created_at'] = 'int not null';
-					$tableFields['updated_at'] = 'int not null';
+					$this->_tableFields['created_at'] = 'int not null';
+					$this->_tableFields['updated_at'] = 'int not null';
 
-					foreach ($fks as $fk)
+					if ( $this->_pks )
 					{
-						$tableFields[] = $fk;
+						$this->_tableFields[] = 'PRIMARY KEY ('.implode(',', $this->_pks).')';
 					}
 
-					$tables[$words[0]] = $tableFields;
+					foreach ($this->_fks as $fk)
+					{
+						$this->_tableFields[] = $fk;
+					}
+
+					$this->_tables[$words[0]] = $this->_tableFields;
 				}
 			}
 		}
@@ -117,7 +113,7 @@ class ScaffoldForm extends Model
 		}\n\n";
 
 
-		foreach ($tables as $table => $fields)
+		foreach ($this->_tables as $table => $fields)
 		{
 			$result .= "\$this->createTable('{$table}', " . var_export($fields, true) .", \$tableOptions);\n\n\n";
 		}
@@ -130,16 +126,61 @@ class ScaffoldForm extends Model
 	 */
 	public function getDownCode()
 	{
-		$tables = $this->getTables();
+		$this->_tables = $this->getTables();
 
 		$result = '';
 
-		foreach (array_reverse($tables) as $table)
+		foreach (array_reverse($this->_tables) as $table)
 		{
 			$result .= "\$this->dropTable('{$table}');\n";
 		}
 
 		return urlencode($result);
+	}
+
+	/**
+	 * @param array $fieldParts
+	 */
+	protected function generateFKWithPK($fieldParts)
+	{
+		unset($this->_tableFields['id']);
+
+		$fieldName = $this->generateFK($fieldParts);
+
+		$this->_pks[] = $fieldName;
+	}
+
+	/**
+	 * Returns field name
+	 *
+	 * @param array $fieldParts
+	 *
+	 * @return string
+	 */
+	protected function generateFK($fieldParts)
+	{
+		$fkParts = explode(' ', $fieldParts[1]);
+		$fieldType = '';
+		$fkString = '';
+
+		foreach ($fkParts as $fkPart)
+		{
+			if ( stripos($fkPart, 'fk') !== false )
+			{
+				array_shift($fkParts);
+
+				$fkString = implode(' ', $fkParts);
+				break;
+			}
+
+			$fieldType .= $fkPart . ' ';
+			array_shift($fkParts);
+		}
+		$this->_tableFields[trim($fieldParts[0])] = trim($fieldType);
+
+		$this->_fks[] = 'FOREIGN KEY (' . $fieldParts[0] . ') REFERENCES ' . $fkString;
+
+		return $fieldParts[0];
 	}
 
 	/**
@@ -151,7 +192,7 @@ class ScaffoldForm extends Model
 	{
 		$lines = explode("\n", $this->code);
 
-		$tables = [];
+		$this->_tables = [];
 
 		foreach ($lines as $line)
 		{
@@ -163,12 +204,12 @@ class ScaffoldForm extends Model
 
 				if ( isset( $words[0] ) )
 				{
-					$tables[] = $words[0];
+					$this->_tables[] = $words[0];
 				}
 			}
 		}
 
-		return $tables;
+		return $this->_tables;
 	}
 
 	/**
