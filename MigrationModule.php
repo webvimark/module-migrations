@@ -17,6 +17,13 @@ class MigrationModule extends \yii\base\Module
 	 */
 	public $migrationsFolder = 'migrations';
 
+	/**
+	 * Default layout
+	 *
+	 * @var string
+	 */
+	public $layout = '//main';
+
 	public $controllerNamespace = 'webvimark\modules\migrations\controllers';
 
 	/**

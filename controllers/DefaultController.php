@@ -9,7 +9,14 @@ use Yii;
 
 class DefaultController extends BaseController
 {
-	public $layout = '//back';
+	/**
+	 * Set layout
+	 */
+	public function init()
+	{
+		$this->layout = $this->module->layout;
+	}
+
 	/**
 	 * @return string
 	 */

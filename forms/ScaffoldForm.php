@@ -75,7 +75,7 @@ class ScaffoldForm extends Model
 
 						if ( stripos($fieldParts[1], 'fk_pk') !== false )
 						{
-							$this->generateFKWithPK($fieldParts);
+							$this->generateFKWithPK($fieldParts, $words[0]);
 						}
 						elseif ( stripos($fieldParts[1], 'fk') !== false )
 						{
@@ -91,9 +91,9 @@ class ScaffoldForm extends Model
 					$this->_tableFields['created_at'] = 'int not null';
 					$this->_tableFields['updated_at'] = 'int not null';
 
-					if ( $this->_pks )
+					if ( isset($this->_pks[$words[0]]) )
 					{
-						$this->_tableFields[] = 'PRIMARY KEY ('.implode(',', $this->_pks).')';
+						$this->_tableFields[] = 'PRIMARY KEY ('.implode(',', $this->_pks[$words[0]]).')';
 					}
 
 					foreach ($this->_fks as $fk)
@@ -140,14 +140,15 @@ class ScaffoldForm extends Model
 
 	/**
 	 * @param array $fieldParts
+	 * @param string $tableName
 	 */
-	protected function generateFKWithPK($fieldParts)
+	protected function generateFKWithPK($fieldParts, $tableName)
 	{
 		unset($this->_tableFields['id']);
 
 		$fieldName = $this->generateFK($fieldParts);
 
-		$this->_pks[] = $fieldName;
+		$this->_pks[$tableName][] = $fieldName;
 	}
 
 	/**
