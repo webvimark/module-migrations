@@ -36,6 +36,12 @@ In your config/web.php
 		'migrations'=>[
 			'class'=>'webvimark\modules\migrations\MigrationModule',
 			'executableYii'=>YII_ENV_DEV ? '@app/yii' : '@app/yii_production',
+
+			// If you want to be able to run migrations from specific url:
+			// http://site.com/migrations/web-execute/index?key=THIS_KEY
+
+			// 'webExecuteEnabled'=>true,
+			// 'webExecuteKey'=>'bla-bla-key',
 		],
 
 		...
