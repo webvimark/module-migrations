@@ -24,6 +24,27 @@ class MigrationModule extends \yii\base\Module
 	 */
 	public $layout = '//main';
 
+	/**
+	 * If http://site.com/migrations/web-execute/index?key=THIS_KEY is enabled
+	 *
+	 * @var bool
+	 */
+	public $webExecuteEnabled = false;
+
+	/**
+	 * If you want to run migrations from web url you should enable it and go to:
+	 *
+	 * <code>
+	 * 	http://site.com/migrations/web-execute/index?key=THIS_KEY
+	 * </code>
+	 *
+	 * @var string
+	 * @see $webExecuteEnabled
+	 */
+	public $webExecuteKey;
+
+
+
 	public $controllerNamespace = 'webvimark\modules\migrations\controllers';
 
 	/**
