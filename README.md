@@ -35,7 +35,7 @@ In your config/web.php
 
 		'migrations'=>[
 			'class'=>'webvimark\modules\migrations\MigrationModule',
-			'executableYii'=>YII_ENV_DEV ? '@app/yii' : '@app/yii_production',
+			'executableYii' => (YII_ENV == 'prod') ? '@app/yii_production' : '@app/yii',
 		],
 
 		...
