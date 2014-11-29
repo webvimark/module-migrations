@@ -3,14 +3,17 @@
  * @var $this yii\web\View
  * @var $title string
  */
+
+$this->title = $title;
 ?>
+<div class="panel panel-default">
+	<div class="panel-body">
 
-<?php $this->title= $title ?>
-<h1><?= $title ?></h1>
-
-<?= $this->render('_buttons') ?>
-<br/>
+		<?= $this->render('_buttons') ?>
+		<br/>
 
 <pre>
 <?= $output ?>
 </pre>
+	</div>
+</div>

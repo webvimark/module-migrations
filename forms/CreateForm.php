@@ -35,19 +35,11 @@ class CreateForm extends Model
 	public function rules()
 	{
 		return [
-			['name', 'filter', 'filter'=>'trim'],
+			['name', 'trim'],
+			['name', 'match', 'pattern'=>'/^\w+$/'],
 			['path', 'safe'],
 			['name', 'required'],
-//			['name', 'replaceSpaces'],
 		];
-	}
-
-	public function replaceSpaces()
-	{
-		if ( $this->name )
-		{
-			$this->name = str_replace($this->name, ' ', '_');
-		}
 	}
 
 	public function attributeLabels()
