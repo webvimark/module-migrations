@@ -310,6 +310,9 @@ class MigrateController extends \yii\console\controllers\MigrateController
 	{
 		if ($this->db->schema->getTableSchema($this->migrationTable, true) === null) {
 			$this->createMigrationHistoryTable();
+
+			$this->db->createCommand()->addColumn($this->migrationTable, 'path', 'string not null')->execute();
+			Yii::$app->cache->flush();
 		}
 		$query = new Query;
 		$rows = $query->select(['version', 'apply_time', 'path'])
