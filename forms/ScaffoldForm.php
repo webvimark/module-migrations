@@ -44,7 +44,7 @@ class ScaffoldForm extends Model
 	 */
 	public function getUpCode()
 	{
-		$lines = explode("\n", $this->code);
+		$lines = explode(";", $this->code);
 
 		$this->_tables = [];
 
@@ -59,13 +59,16 @@ class ScaffoldForm extends Model
 
 				if ( isset( $words[0] ) ) // $words[0] - table name
 				{
+					// Remove line break and surrounding spaces from table name
+					$tableName = trim(explode("\n", $words[0])[0]);
+
 					$this->_fks = [];
 
 					$this->_tableFields['id'] = 'pk';
 
-					$line = ltrim($line, $words[0]); // remove table name from line
+					$line = ltrim($line, $tableName); // remove table name from line
 
-					$fields = explode('|', $line); // extract statements like "sorter:int not null"
+					$fields = explode(',', $line); // extract statements like "sorter:int not null"
 
 					foreach ($fields as $field)
 					{
@@ -75,7 +78,7 @@ class ScaffoldForm extends Model
 
 						if ( stripos($fieldParts[1], 'fk_pk') !== false )
 						{
-							$this->generateFKWithPK($fieldParts, $words[0]);
+							$this->generateFKWithPK($fieldParts, $tableName);
 						}
 						elseif ( stripos($fieldParts[1], 'fk') !== false )
 						{
@@ -91,9 +94,9 @@ class ScaffoldForm extends Model
 					$this->_tableFields['created_at'] = 'int not null';
 					$this->_tableFields['updated_at'] = 'int not null';
 
-					if ( isset($this->_pks[$words[0]]) )
+					if ( isset($this->_pks[$tableName]) )
 					{
-						$this->_tableFields[] = 'PRIMARY KEY ('.implode(',', $this->_pks[$words[0]]).')';
+						$this->_tableFields[] = 'PRIMARY KEY ('.implode(',', $this->_pks[$tableName]).')';
 					}
 
 					foreach ($this->_fks as $fk)
@@ -101,7 +104,7 @@ class ScaffoldForm extends Model
 						$this->_tableFields[] = $fk;
 					}
 
-					$this->_tables[$words[0]] = $this->_tableFields;
+					$this->_tables[$tableName] = $this->_tableFields;
 				}
 			}
 		}
@@ -111,7 +114,6 @@ class ScaffoldForm extends Model
 		{
 			\$tableOptions = 'CHARACTER SET utf8 COLLATE utf8_general_ci ENGINE=InnoDB';
 		}\n\n";
-
 
 		foreach ($this->_tables as $table => $fields)
 		{
@@ -191,7 +193,7 @@ class ScaffoldForm extends Model
 	 */
 	public function getTables()
 	{
-		$lines = explode("\n", $this->code);
+		$lines = explode(";", $this->code);
 
 		$this->_tables = [];
 
@@ -205,7 +207,7 @@ class ScaffoldForm extends Model
 
 				if ( isset( $words[0] ) )
 				{
-					$this->_tables[] = $words[0];
+					$this->_tables[] = trim(explode("\n", $words[0])[0]);
 				}
 			}
 		}
@@ -222,7 +224,7 @@ class ScaffoldForm extends Model
 			[['code', 'name'], 'filter', 'filter'=>'trim'],
 			['path', 'safe'],
 			[['name', 'code'], 'required'],
-//			['name', 'replaceSpaces'],
+			['name', 'replaceSpaces'],
 		];
 	}
 
@@ -230,7 +232,7 @@ class ScaffoldForm extends Model
 	{
 		if ( $this->name )
 		{
-			$this->name = str_replace($this->name, ' ', '_');
+			$this->name = str_replace(' ', '_', $this->name);
 		}
 	}
 

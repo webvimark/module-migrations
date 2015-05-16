@@ -30,7 +30,7 @@ use yii\helpers\Inflector;
 		<li>
 			<?= Html::a(
 				$table,
-				['/gii/default/view', 'id'=>0, 'tableName'=>$table, 'modelClass'=>Inflector::id2camel($table, '_'), 'ns'=>$ns],
+				['/gii/default/view', 'id'=>'ybc-model', 'tableName'=>$table, 'modelClass'=>Inflector::id2camel($table, '_'), 'ns'=>$ns],
 				['target'=>'_blank']
 			) ?>
 		</li>
