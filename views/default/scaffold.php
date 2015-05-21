@@ -19,13 +19,13 @@ $this->title = 'Scaffold';
 		<div class="well">
 			<b>Example:</b>
 <pre>
-book active:tinyint(1) not null default 1, sorter:int not null, name:string not null, author_id:int <b>fk</b> user (id) ON DELETE CASCADE ON UPDATE CASCADE;
+book active:smallint(1) not null default 1, sorter:int not null, name:string not null, author_id:int <b>fk</b> user (id) ON DELETE CASCADE ON UPDATE CASCADE;
 </pre>
 
 			<b>You can write like this for better readability:</b>
 <pre>
 book
-	active : tinyint(1) not null default 1,
+	active : smallint(1) not null default 1,
 	sorter : int not null,
 	name : string not null,
 	author_id : int <b>fk</b> user (id) ON DELETE CASCADE ON UPDATE CASCADE;
