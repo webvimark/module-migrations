@@ -84,7 +84,11 @@ class DefaultController extends BaseController
 
 			$modules = ScaffoldForm::getModulesAsArray();
 
-			$ns = str_replace('\controllers', '\models', Yii::$app->getModule($modules[$model->path])->controllerNamespace);
+			$baseNs = @Yii::$app->getModule($modules[$model->path])->controllerNamespace ?
+				Yii::$app->getModule($modules[$model->path])->controllerNamespace :
+				Yii::$app->controllerNamespace;
+
+			$ns = str_replace('\controllers', '\models', $baseNs);
 
 			return $this->render('scaffoldForGii', [
 				'title'  => 'Scaffolding migration',
