@@ -68,7 +68,19 @@ class ScaffoldForm extends Model
 
 					$line = ltrim($line, $tableName); // remove table name from line
 
-					$fields = explode(',', $line); // extract statements like "sorter:int not null"
+					$tmpLines = explode("\n", $line); // extract statements like "sorter:int not null"
+
+					$fields = [];
+					foreach ($tmpLines as $tmpLine)
+					{
+						$tmpLine = trim($tmpLine);
+
+						if ( $tmpLine )
+						{
+							$fields[] = $tmpLine;
+						}
+					}
+
 
 					foreach ($fields as $field)
 					{
